@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+<div class="min-h-screen lg:ml-72 relative">
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-md">
+    <div class="px-6 py-4 flex items-center justify-between">
+      <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600 hover:text-indigo-600 transition-colors">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      <div class="flex-1 px-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Update Task</h1>
+        <div class="flex gap-3">
+          <a href="{% url 'planner:tasks' %}" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors">Cancel</a>
+          <button type="submit" form="updateTaskForm" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">Update Task</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Form Content -->
+  <div class="p-8">
+    <form id="updateTaskForm" method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+      <div class="bg-red-50 border-l-4 border-red-500 p-4">
+        {% for error in form.non_field_errors %}
+          <p class="text-red-700">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Basic Information -->
+      <div class="form-card p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6">Task Information</h2>
+        <div class="space-y-6">
+          <!-- Task Title -->
+          <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Priority, Category, Deadline, and Status in one row -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div>
+              <label for="{{ form.priority.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+              {{ form.priority }}
+              {% if form.priority.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.priority.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              {{ form.category }}
+              {% if form.category.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.category.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.deadline.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
+              {{ form.deadline }}
+              {% if form.deadline.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.deadline.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              {{ form.status }}
+              {% if form.status.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.status.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-card p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6">Task Description</h2>
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  // Initialize Flatpickr for datetime picker
+  flatpickr(".datetimepicker", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    minDate: "today",
+    time_24hr: true,
+    minuteIncrement: 15,
+    defaultHour: 9,
+    position: "auto",
+    allowInput: true,
+    onChange: function(selectedDates, dateStr, instance) {
+      // You can add custom validation here if needed
+    }
+  });
+</script>
+{% endblock %}

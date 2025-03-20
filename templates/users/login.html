@@ -1,0 +1,190 @@
+{% load form_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeMaster - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .form-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .gradient-background {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+        .error-shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50" x-data="{ showPassword: false }">
+    <div class="min-h-screen flex flex-col md:flex-row">
+        <!-- Left Section - Branding -->
+        <div class="hidden md:flex md:w-1/2 gradient-background p-12 text-white flex-col justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-4">Welcome Back!</h1>
+                <p class="text-lg text-indigo-100">Log in to continue your productivity journey</p>
+            </div>
+            
+            <div class="relative">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -translate-x-16 -translate-y-16 blur-2xl"></div>
+                <div class="absolute bottom-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full translate-x-16 translate-y-16 blur-2xl"></div>
+                
+                <!-- Testimonial -->
+                <div class="relative bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-quote-right text-white/80"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Sarah Johnson</h3>
+                            <p class="text-sm text-indigo-200">Product Manager</p>
+                        </div>
+                    </div>
+                    <p class="text-indigo-100 italic">
+                        "DailyPlanner has transformed how I manage my tasks and schedule. It's intuitive, efficient, and helps me stay focused on what matters most."
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-sm text-indigo-200">
+                © 2025 DailyPlanner. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right Section - Login Form -->
+        <div class="w-full md:w-1/2 flex items-center justify-center p-8">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Login to DailyPlanner</h2>
+                    <p class="text-gray-600">Enter your credentials to access your account</p>
+                </div>
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 error-shake">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                {% for error in form.non_field_errors %}
+                                    <p class="text-sm text-red-700">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Email Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.email.id_for_label }}">
+                            Email Address
+                        </label>
+                        <div class="relative">
+                            {{ form.email|addclass:"w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" }}
+                            {% if form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.email.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-sm font-medium text-gray-700" for="{{ form.password.id_for_label }}">
+                                Password
+                            </label>
+                        </div>
+                        <div class="relative">
+                            {{ form.password|addclass:"w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors pr-12" }}
+                            <button 
+                                type="button"
+                                @click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                onclick="togglePassword('{{ form.password.id_for_label }}')"
+                            >
+                                <i class="fas" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                            </button>
+                            {% if form.password.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.password.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="remember-me" 
+                                name="remember"
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                            >
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                                Remember me
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit"
+                        class="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-white gradient-background hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 flex items-center justify-center"
+                    >
+                        Sign In
+                    </button>
+
+                    <!-- Register Link -->
+                    <p class="text-center text-sm text-gray-600">
+                        Don't have an account? 
+                        <a href="{% url 'users:signup' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Create one</a>
+                    </p>
+                </form>
+
+                <!-- Security Note -->
+                <div class="mt-8 text-center">
+                    <div class="inline-flex items-center space-x-2 text-sm text-gray-500">
+                        <i class="fas fa-lock"></i>
+                        <span>Secure login with 256-bit encryption</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>
